@@ -9,11 +9,33 @@
  */
 
 // ↓ uncomment bellow lines and add your response!
-/*
-export default function ({ groups }: { groups: Group[] }): GroupWithSills[] {
-    return [];
-}
-*/
+
+export default function addSkillsToGroups({ groups }: { groups: Group[] }): Group[] {
+    const groupSkills: Record<string, string[]> = {};
+  
+    for (const group of groups) {
+      for (const student of group.students) {
+        if (student.skills) {
+          if (!groupSkills[group.name]) {
+            groupSkills[group.name] = [];
+          }
+          groupSkills[group.name].push(...student.skills);
+        }
+      }
+    }
+    for (const groupName in groupSkills) {
+      const skills = groupSkills[groupName];
+      groupSkills[groupName] = Array.from(new Set(skills)).sort();
+    }
+  
+    const groupsWithSkills: Group[] = groups.map((group) => ({
+      ...group,
+      skills: groupSkills[group.name] || [],
+    }));
+  
+    return groupsWithSkills;
+  }
+
 
 // used interfaces, do not touch
 interface Student {
